@@ -9,6 +9,7 @@ const resolve = (p: string) => path.resolve(process.cwd(), p)
 
 export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
   const options: UserOptions = {
+    mpa: false,
     ...userOptions,
   }
   let config: ResolvedConfig

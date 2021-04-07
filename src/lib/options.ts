@@ -4,7 +4,8 @@
 
 export interface Options {
   /**
-   * 是否是 MPA multi-page application
+   * is MPA multi-page application or not
+   * @default false
    */
   mpa: boolean
 }

@@ -1,6 +1,6 @@
 # vite-plugin-html-template
 
-> use html template for vite serve, like HtmlWebpackPlugin with public/index.html
+> HTML template for vite, like HtmlWebpackPlugin for Webpack
 
 <p align="center">
   <a href="https://github.com/IndexXuan/vite-plugin-html-template/actions/workflows/npm-publish.yml">
@@ -52,10 +52,6 @@ export default defineConfig({
 
 - [see more](https://github.com/IndexXuan/vite-plugin-html-template/blob/main/src/lib/options.ts)
 
-## Examples
-- see [src/examples](https://github.com/IndexXuan/vite-plugin-html-template/blob/main/examples)
-
-- use shelljs after-build to organize dist folder, maybe have better approach (help wanted)
 
 ## Underlying
 - Thanks to [vite-plugin-virtual-html](https://github.com/Windson1806/vite-plugin-virtual-html)
