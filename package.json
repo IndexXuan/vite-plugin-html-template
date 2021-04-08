@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-html-template",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "html template for vite",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,9 +27,12 @@
     "html-template",
     "virtual-html"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "shelljs": "0.8.4"
+  },
   "devDependencies": {
     "@types/lodash": "^4.14.168",
+    "@types/shelljs": "0.8.8",
     "lint-staged": "10.5.4",
     "lodash": "^4.17.21",
     "prettier": "2.2.1",

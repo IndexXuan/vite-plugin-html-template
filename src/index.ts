@@ -1,18 +1,22 @@
 import type { Plugin, ViteDevServer, ResolvedConfig } from 'vite'
 import type { UserOptions } from './lib/options'
 import path from 'path'
-import { getHtmlTemplate } from './lib/utils'
-import { template } from 'lodash'
+import shell from 'shelljs'
+import { last } from 'lodash'
+import { getHtmlContent } from './lib/utils'
 import { name } from '../package.json'
 
 const resolve = (p: string) => path.resolve(process.cwd(), p)
+// must src to corresponding with vite-plugin-mpa#closeBundle hook
+const PREFIX = 'src'
 
 export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
-  const options: UserOptions = {
-    mpa: false,
+  const options = {
+    pages: {},
     ...userOptions,
   }
   let config: ResolvedConfig
+  const isMPA = Object.keys(options.pages).length > 0
   return {
     name,
     configResolved(resolvedConfig) {
@@ -22,7 +26,6 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
      * for dev
      * if SPA, just use template and write script main.{js,ts} for /{entry}.html
      * if MPA, check pageName(default is index) and write /src/pages/{pageName}/${entry}.html
-     * MVP: only support public/index.html
      */
     configureServer(server: ViteDevServer) {
       server.middlewares.use(async (req, res, next) => {
@@ -31,50 +34,71 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           return next()
         }
         let url = req.url
-        const templatePath = resolve('public/index.html')
-        const entryJsPath = (() => {
+        const pageName = (() => {
           if (url === '/') {
-            if (options.mpa) {
-              return '/src/pages/index/main'
-            } else {
-              return '/src/main'
-            }
-          } else {
-            if (options.mpa) {
-              return url?.replace('./', '/').replace(/(.*)\/(.*).html/, '$1/main')
-            } else {
-              return '/src/pages/index/main'
-            }
+            return 'index'
           }
+          return url.match(/pages\/(.*)\//)?.[1] || 'index'
         })()
-        const content = await getHtmlTemplate(templatePath, entryJsPath)
-        const compiled = template(content)
-        const data = {
-          htmlWebpackPlugin: {
-            options: {
-              title: 'page title',
-            },
-          },
-          webpackConfig: {
-            name: 'page title',
-            output: {
-              publicPath: config.base,
-            },
-          },
-          BASE_URL: config.base,
-        }
-        const html = compiled({
-          ...data,
-        })
-        res.end(html)
+        const templateOption = options.pages && options.pages[pageName]?.template
+        const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
+        const content = await getHtmlContent(
+          templatePath,
+          pageName,
+          options.pages,
+          config.base,
+          url,
+        )
+        res.end(content)
       })
     },
     /**
-     * for build
-     * like HtmlWebpackPlugin,
+     * virtual html
+     * @see {@link https://github.com/rollup/plugins/blob/master/packages/virtual/src/index.ts}
      */
-    async closeBundle() {
-      console.log('[WIP]: build')
+    resolveId(id) {
+      if (id.endsWith('.html')) {
+        if (!isMPA) {
+          return `${PREFIX}/${path.basename(id)}`
+        } else {
+          const pageName = last(path.dirname(id).split('/')) || ''
+          if (pageName in options.pages) {
+            return `${PREFIX}/pages/${pageName}/index.html`
+          }
+        }
+      }
+      return null
+    },
+    load(id) {
+      if (id.startsWith(PREFIX)) {
+        const idNoPrefix = id.slice(PREFIX.length)
+        const pageName = path.basename(id).replace('.html', '')
+
+        const templateOption = options.pages && options.pages[pageName]?.template
+        const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
+        return getHtmlContent(
+          templatePath,
+          pageName,
+          options.pages,
+          config.base,
+          isMPA ? idNoPrefix : '/',
+        )
+      }
+
+      return null
+    },
+    closeBundle() {
+      // MPA is handle by vite-plugin-mpa
+      if (!isMPA) {
+        const root = config.root || process.cwd()
+        const dest = (config.build && config.build.outDir) || 'dist'
+        const resolve = (p: string) => path.resolve(root, p)
+
+        // 1. move src/*.html to dest root
+        shell.mv(resolve(`${dest}/${PREFIX}/*.html`), resolve(dest))
+        // 2. remove empty src dir
+        shell.rm('-rf', resolve(`${dest}/${PREFIX}`))
+      }
     },
   }
 }

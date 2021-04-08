@@ -4,10 +4,28 @@
 
 export interface Options {
   /**
-   * is MPA multi-page application or not
-   * @default false
+   * @see {@link https://cli.vuejs.org/config/#pages}
    */
-  mpa: boolean
+  pages: {
+    [pageName: string]: {
+      /**
+       * @default src/pages/xxx/main.js
+       */
+      entry: string
+      /**
+       * @default public/index.html
+       */
+      template?: string
+      /**
+       * @default 'page-title'
+       */
+      title?: string
+      /**
+       * @default 'index.html'
+       */
+      filename?: string
+    }
+  }
 }
 
 export type UserOptions = Partial<Options>
