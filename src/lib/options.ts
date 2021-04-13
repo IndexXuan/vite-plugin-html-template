@@ -9,10 +9,6 @@ export interface Options {
   pages: {
     [pageName: string]: {
       /**
-       * @default src/pages/xxx/main.js
-       */
-      entry: string
-      /**
        * @default public/index.html
        */
       template?: string
@@ -21,7 +17,13 @@ export interface Options {
        */
       title?: string
       /**
+       * @default src/pages/xxx/main.js
+       * not implement
+       */
+      entry: string
+      /**
        * @default 'index.html'
+       * not implement
        */
       filename?: string
     }

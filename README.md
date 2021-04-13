@@ -1,6 +1,6 @@
 # vite-plugin-html-template
 
-> HTML template for vite, like HtmlWebpackPlugin for Webpack
+> HTML template for vite app, like html-webpack-plugin for webpack.
 
 <p align="center">
   <img alt="wakatime" src="https://wakatime.com/badge/github/IndexXuan/vite-plugin-html-template.svg" />
@@ -20,8 +20,11 @@
 
 ## Motivation
 
-- Vite need html for entry file, which means we must have projectRoot/index.html for SPA and projectRoot/src/pages/*/index.html for MPA
+- Vite need html for entry file, which means we must have
+  - projectRoot/index.html for SPA
+  - projectRoot/src/pages/*/index.html for MPA
 - Why not we use html template for all entry html
+- Also we should support ejs/lodash.template syntax for the html content, like setting `<title></title>`.
 
 ## Usage
 
@@ -44,10 +47,20 @@ export default defineConfig({
 
 ## Options
 
+- like [vue-cli#pages](https://cli.vuejs.org/config/#pages)
 ```ts
+// for SPA, you can do nothing, auto reuse public/index.html use template
+
+// for MPA, you can custom template path(default is public/index.html) and page title
 {
-  /** is MPA or not */
-  mpa: boolean
+  index: {
+    template: './public/index.html',
+    title: 'Home Page',
+  },
+  subpage: {
+    template: './src/pages/subpage/index.html',
+    title: 'Sub Page',
+  },
 }
 ```
 
