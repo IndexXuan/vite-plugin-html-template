@@ -48,6 +48,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           options.pages,
           config.base,
           url,
+          options.data || {},
         )
         res.end(content)
       })
@@ -82,6 +83,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           options.pages,
           config.base,
           isMPA ? idNoPrefix : '/',
+          options.data || {},
         )
       }
 

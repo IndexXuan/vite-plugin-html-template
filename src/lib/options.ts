@@ -28,6 +28,7 @@ export interface Options {
       filename?: string
     }
   }
+  data: Record<string, any>
 }
 
 export type UserOptions = Partial<Options>

@@ -53,13 +53,20 @@ export default defineConfig({
 
 // for MPA, you can custom template path(default is public/index.html) and page title
 {
-  index: {
-    template: './public/index.html',
-    title: 'Home Page',
+  // define pages
+  pages: {
+    index: {
+      template: './public/index.html',
+      title: 'Home Page',
+    },
+    subpage: {
+      template: './src/pages/subpage/index.html',
+      title: 'Sub Page',
+    },
   },
-  subpage: {
-    template: './src/pages/subpage/index.html',
-    title: 'Sub Page',
+  // expose to template
+  data: {
+    title: 'Home Page',
   },
 }
 ```

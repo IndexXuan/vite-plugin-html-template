@@ -14,6 +14,7 @@ export async function getHtmlContent(
   pages: Required<UserOptions>['pages'],
   base: string,
   url: string,
+  extraData: Record<string, any>,
 ) {
   let content = ''
   const isMPA = Object.keys(pages).length > 0
@@ -44,18 +45,36 @@ export async function getHtmlContent(
   const title = pages[pageName]?.title || 'page title'
   const compiled = template(content)
   const data = {
+    // @see https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates
+    // for compatibility
     htmlWebpackPlugin: {
       options: {
         title,
       },
+      tags: {
+        headTags: [],
+        bodyTags: [],
+      },
+      files: {
+        publicPath: base,
+        js: [],
+        css: [],
+        manifest: '',
+        favicon: '',
+      },
     },
+    // for compatibility
     webpackConfig: {
       name: title,
       output: {
         publicPath: base,
       },
     },
+    // @see https://cli.vuejs.org/guide/html-and-static-assets.html#html
     BASE_URL: base,
+    // envs
+    ...process.env,
+    ...extraData,
   }
   const html = compiled({
     ...data,
