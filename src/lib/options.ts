@@ -13,21 +13,24 @@ export interface Options {
        */
       template?: string
       /**
-       * @default 'page-title'
+       * @default 'Home Page'
        */
       title?: string
       /**
-       * @default src/pages/xxx/main.js
-       * not implement
+       * @default src/pages/${pageName}/main.{js,ts}
+       * TODO: implemention
        */
-      entry: string
+      entry?: string
       /**
        * @default 'index.html'
-       * not implement
+       * TODO: implemention
        */
       filename?: string
     }
   }
+  /**
+   * @default {}
+   */
   data: Record<string, any>
 }
 

@@ -42,7 +42,7 @@ export async function getHtmlContent(
     '</body>',
     `  <script type="module" src="${entryJsPath}"></script>\n</body>`,
   )
-  const title = pages[pageName]?.title || 'page title'
+  const title = pages[pageName]?.title || 'Home Page'
   const compiled = template(content)
   const data = {
     // @see https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates
@@ -70,6 +70,8 @@ export async function getHtmlContent(
         publicPath: base,
       },
     },
+    /** page title, both SPA & MPA supported */
+    title,
     // @see https://cli.vuejs.org/guide/html-and-static-assets.html#html
     BASE_URL: base,
     // envs
