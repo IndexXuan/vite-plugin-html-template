@@ -49,11 +49,11 @@ export default defineConfig({
 
 - like [vue-cli#pages](https://cli.vuejs.org/config/#pages)
 ```ts
-// for SPA, you can do nothing, auto reuse public/index.html use template
+// for SPA, you can do nothing, auto reuse public/index.html as template
 
 // for MPA, you can custom template path(default is public/index.html) and page title
 {
-  // define pages
+  // define pages like vue-cli
   pages: {
     index: {
       template: './public/index.html',
@@ -81,3 +81,4 @@ export default defineConfig({
 
 ## Further
 - [vue-cli-plugin-vite](https://github.com/IndexXuan/vue-cli-plugin-vite)
+- [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa)
