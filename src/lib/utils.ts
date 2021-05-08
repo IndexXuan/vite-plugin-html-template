@@ -39,8 +39,8 @@ export async function getHtmlContent(
     console.error(e)
   }
   content = content.replace(
-    '<div id="app"></div>',
-    `<div id="app"></div>\n    <script type="module" src="${entryJsPath}"></script>`,
+    '</body>',
+    `  <script type="module" src="${entryJsPath}"></script>\n</body>`,
   )
   const title = pages[pageName]?.title || 'page title'
   const compiled = template(content)
