@@ -12,12 +12,12 @@ export async function getHtmlContent(
   templatePath: string,
   pageName: string,
   pages: Required<UserOptions>['pages'],
+  isMPA: boolean,
   base: string,
   url: string,
   extraData: Record<string, any>,
 ) {
   let content = ''
-  const isMPA = Object.keys(pages).length > 0
   const entryJsPath = (() => {
     if (url === '/') {
       if (isMPA) {

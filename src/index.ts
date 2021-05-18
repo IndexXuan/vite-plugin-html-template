@@ -42,10 +42,12 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         })()
         const templateOption = options.pages[pageName]?.template
         const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
+        const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
         const content = await getHtmlContent(
           templatePath,
           pageName,
           options.pages,
+          isMPA,
           config.base,
           url,
           options.data,
@@ -84,6 +86,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           templatePath,
           pageName,
           options.pages,
+          isMPA,
           config.base,
           isMPA ? idNoPrefix : '/',
           options.data,
