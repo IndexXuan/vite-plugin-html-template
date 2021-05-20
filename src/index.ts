@@ -28,32 +28,34 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
      * if MPA, check pageName(default is index) and write /src/pages/{pageName}/${entry}.html
      */
     configureServer(server: ViteDevServer) {
-      server.middlewares.use(async (req, res, next) => {
-        // if not html, next it.
-        if (!req.url?.endsWith('.html') && req.url !== '/') {
-          return next()
-        }
-        let url = req.url
-        const pageName = (() => {
-          if (url === '/') {
-            return 'index'
+      return () => {
+        server.middlewares.use(async (req, res, next) => {
+          // if not html, next it.
+          if (!req.url?.endsWith('.html') && req.url !== '/') {
+            return next()
           }
-          return url.match(/pages\/(.*)\//)?.[1] || 'index'
-        })()
-        const templateOption = options.pages[pageName]?.template
-        const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
-        const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
-        const content = await getHtmlContent(
-          templatePath,
-          pageName,
-          options.pages,
-          isMPA,
-          config.base,
-          url,
-          options.data,
-        )
-        res.end(content)
-      })
+          let url = req.url
+          const pageName = (() => {
+            if (url === '/') {
+              return 'index'
+            }
+            return url.match(/pages\/(.*)\//)?.[1] || 'index'
+          })()
+          const templateOption = options.pages[pageName]?.template
+          const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
+          const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
+          const content = await getHtmlContent(
+            templatePath,
+            pageName,
+            options.pages,
+            isMPA,
+            config.base,
+            url,
+            options.data,
+          )
+          res.end(content)
+        })
+      }
     },
     /**
      * for dev
