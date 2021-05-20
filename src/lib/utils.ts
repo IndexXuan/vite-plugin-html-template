@@ -19,7 +19,7 @@ export async function getHtmlContent(
 ) {
   let content = ''
   const entryJsPath = (() => {
-    if (url === '/') {
+    if (['/', '/index.html'].includes(url)) {
       if (isMPA) {
         return '/src/pages/index/main'
       } else {
