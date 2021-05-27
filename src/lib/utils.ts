@@ -28,13 +28,17 @@ export async function getHtmlContent(payload: Payload) {
   const entryJsPath = (() => {
     if (['/', '/index.html'].includes(extraData.url)) {
       if (isMPA) {
-        return `/${pagesDir}/index/${pageEntry}`
+        return pageEntry.includes('src')
+          ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
+          : `/${pagesDir}/index/${pageEntry}`
       } else {
         return '/src/main'
       }
     } else {
       if (isMPA) {
-        return `/${pagesDir}/${pageName}/${pageEntry}`
+        return pageEntry.includes('src')
+          ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
+          : `/${pagesDir}/${pageName}/${pageEntry}`
       } else {
         return '/src/main'
       }

@@ -17,12 +17,14 @@ export default defineConfig({
       pagesDir: 'src/pages-dir',
       pages: {
         index: {
+          template: 'public/template.html',
           title: 'Index Page',
-          entry: 'index.ts',
+          entry: 'src/pages-dir/index/index.ts',
         },
         subpage: {
+          template: 'public/template.html',
           title: 'SubPage Page',
-          entry: 'index.ts',
+          entry: 'src/pages-dir/subpage/index.ts',
         },
       },
     }),

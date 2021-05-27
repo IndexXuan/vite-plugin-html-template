@@ -23,7 +23,7 @@ export interface Options {
        */
       title?: string
       /**
-       * @default main(src/pages/${pageName}/main)
+       * @default SPA => 'main'; MPA => 'src/pages/${pageName}/main'
        */
       entry?: string
       /**
