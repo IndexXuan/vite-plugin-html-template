@@ -4,6 +4,12 @@
 
 export interface Options {
   /**
+   * page dir
+   * @default 'src/pages'
+   */
+  pagesDir: string
+  /**
+   * pages options
    * @see {@link https://cli.vuejs.org/config/#pages}
    */
   pages: {
@@ -17,8 +23,7 @@ export interface Options {
        */
       title?: string
       /**
-       * @default src/pages/${pageName}/main.{js,ts}
-       * TODO: implemention
+       * @default main(src/pages/${pageName}/main)
        */
       entry?: string
       /**
@@ -29,6 +34,7 @@ export interface Options {
     }
   }
   /**
+   * data expose to template.
    * @default {}
    */
   data: Record<string, any>

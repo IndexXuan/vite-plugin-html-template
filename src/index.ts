@@ -12,6 +12,7 @@ const PREFIX = 'src'
 
 export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
   const options = {
+    pagesDir: 'src/pages',
     pages: {},
     data: {},
     ...userOptions,
@@ -25,7 +26,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     /**
      * for dev
      * if SPA, just use template and write script main.{js,ts} for /{entry}.html
-     * if MPA, check pageName(default is index) and write /src/pages/{pageName}/${entry}.html
+     * if MPA, check pageName(default is index) and write /${pagesDir}/{pageName}/${entry}.html
      */
     configureServer(server: ViteDevServer) {
       return () => {
@@ -39,20 +40,27 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
             if (url === '/') {
               return 'index'
             }
-            return url.match(/pages\/(.*)\//)?.[1] || 'index'
+            return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index'
           })()
-          const templateOption = options.pages[pageName]?.template
-          const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
+          const page = options.pages[pageName] || {}
+          const templateOption = page.template
+          const templatePath = templateOption
+            ? resolve(templateOption)
+            : resolve('public/index.html')
           const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
-          const content = await getHtmlContent(
-            templatePath,
+          const content = await getHtmlContent({
+            pagesDir: options.pagesDir,
             pageName,
-            options.pages,
+            templatePath,
+            pageEntry: page.entry || 'main',
+            pageTitle: page.title || 'Home Page',
             isMPA,
-            config.base,
-            url,
-            options.data,
-          )
+            data: options.data,
+            extraData: {
+              base: config.base,
+              url,
+            },
+          })
           res.end(content)
         })
       }
@@ -69,7 +77,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         } else {
           const pageName = last(path.dirname(id).split('/')) || ''
           if (pageName in (config.build.rollupOptions.input as any)) {
-            return `${PREFIX}/pages/${pageName}/index.html`
+            return `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`
           }
         }
       }
@@ -81,18 +89,23 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         const idNoPrefix = id.slice(PREFIX.length)
         const pageName = path.basename(id).replace('.html', '')
 
-        const templateOption = options.pages[pageName]?.template
+        const page = options.pages[pageName] || {}
+        const templateOption = page.template
         const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
         const isMPA = Object.keys(config.build?.rollupOptions.input || {}).length > 0
-        return getHtmlContent(
-          templatePath,
+        return getHtmlContent({
+          pagesDir: options.pagesDir,
           pageName,
-          options.pages,
+          templatePath,
+          pageEntry: page.entry || 'main',
+          pageTitle: page.title || 'Home Page',
           isMPA,
-          config.base,
-          isMPA ? idNoPrefix : '/',
-          options.data,
-        )
+          extraData: {
+            base: config.base,
+            url: isMPA ? idNoPrefix : '/',
+          },
+          data: options.data,
+        })
       }
       return null
     },

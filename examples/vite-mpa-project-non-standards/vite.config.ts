@@ -8,9 +8,24 @@ import htmlTemplate from 'vite-plugin-html-template'
 export default defineConfig({
   plugins: [
     vue(),
-    mpa(),
+    mpa({
+      scanDir: 'src/pages-dir',
+      scanFile: 'index.ts',
+    }),
     // undefined || {} || options below
-    htmlTemplate({}),
+    htmlTemplate({
+      pagesDir: 'src/pages-dir',
+      pages: {
+        index: {
+          title: 'Index Page',
+          entry: 'index.ts',
+        },
+        subpage: {
+          title: 'SubPage Page',
+          entry: 'index.ts',
+        },
+      },
+    }),
   ],
   resolve: {
     alias: {

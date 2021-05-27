@@ -7,29 +7,36 @@ async function readHtmlTemplate(templatePath: string) {
   return await fs.readFile(templatePath, { encoding: 'utf8' })
 }
 
+interface Payload {
+  pagesDir: string
+  pageName: string
+  templatePath: string
+  pageEntry: string
+  pageTitle: string
+  isMPA: boolean
+  data: UserOptions['data']
+  extraData: {
+    base: string
+    url: string
+  }
+}
+
 /** patch original content with vite entry esmodule script */
-export async function getHtmlContent(
-  templatePath: string,
-  pageName: string,
-  pages: Required<UserOptions>['pages'],
-  isMPA: boolean,
-  base: string,
-  url: string,
-  extraData: Record<string, any>,
-) {
+export async function getHtmlContent(payload: Payload) {
+  const { pagesDir, templatePath, pageName, pageTitle, pageEntry, isMPA, data, extraData } = payload
   let content = ''
   const entryJsPath = (() => {
-    if (['/', '/index.html'].includes(url)) {
+    if (['/', '/index.html'].includes(extraData.url)) {
       if (isMPA) {
-        return '/src/pages/index/main'
+        return `/${pagesDir}/index/${pageEntry}`
       } else {
         return '/src/main'
       }
     } else {
       if (isMPA) {
-        return `/src/pages/${pageName}/main`
+        return `/${pagesDir}/${pageName}/${pageEntry}`
       } else {
-        return '/src/pages/index/main'
+        return '/src/main'
       }
     }
   })()
@@ -42,21 +49,20 @@ export async function getHtmlContent(
     '</body>',
     `  <script type="module" src="${entryJsPath}"></script>\n</body>`,
   )
-  const title = pages[pageName]?.title || 'Home Page'
   const compiled = template(content)
-  const data = {
+  const context = {
     // @see https://github.com/jantimon/html-webpack-plugin#writing-your-own-templates
     // for compatibility
     htmlWebpackPlugin: {
       options: {
-        title,
+        title: pageTitle,
       },
       tags: {
         headTags: [],
         bodyTags: [],
       },
       files: {
-        publicPath: base,
+        publicPath: extraData.base,
         js: [],
         css: [],
         manifest: '',
@@ -65,21 +71,21 @@ export async function getHtmlContent(
     },
     // for compatibility
     webpackConfig: {
-      name: title,
+      name: pageTitle,
       output: {
-        publicPath: base,
+        publicPath: extraData.base,
       },
     },
     /** page title, both SPA & MPA supported */
-    title,
+    title: pageTitle,
     // @see https://cli.vuejs.org/guide/html-and-static-assets.html#html
-    BASE_URL: base,
+    BASE_URL: extraData.base,
     // envs
     ...process.env,
-    ...extraData,
+    ...data,
   }
   const html = compiled({
-    ...data,
+    ...context,
   })
   return html
 }

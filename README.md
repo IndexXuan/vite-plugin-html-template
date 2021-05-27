@@ -53,6 +53,8 @@ export default defineConfig({
 
 // for MPA, you can custom template path(default is public/index.html) and page title
 {
+  // where pages ?
+  pagesDir: 'src/pages',
   // define pages like vue-cli
   pages: {
     index: {
