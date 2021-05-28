@@ -112,7 +112,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     /** for build */
     closeBundle() {
       const isMPA = Object.keys(config.build?.rollupOptions.input || {}).length > 0
-      // MPA is handle by vite-plugin-mpa
+      // MPA handled by vite-plugin-mpa
       if (!isMPA) {
         const root = config.root || process.cwd()
         const dest = (config.build && config.build.outDir) || 'dist'

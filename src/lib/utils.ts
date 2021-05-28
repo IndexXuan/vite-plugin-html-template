@@ -26,6 +26,7 @@ export async function getHtmlContent(payload: Payload) {
   const { pagesDir, templatePath, pageName, pageTitle, pageEntry, isMPA, data, extraData } = payload
   let content = ''
   const entryJsPath = (() => {
+    // entry case: src/pages/index/main.ts or /src/pages/index/main.ts or ./src/pages/index/main.ts => /src/pages/index/main.ts
     if (['/', '/index.html'].includes(extraData.url)) {
       if (isMPA) {
         return pageEntry.includes('src')

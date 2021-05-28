@@ -27,8 +27,8 @@ export interface Options {
        */
       entry?: string
       /**
-       * @default 'index.html'
-       * TODO: implemention
+       * @default '${pageName}/index.html' at dest
+       * not implements and have no idea
        */
       filename?: string
     }
