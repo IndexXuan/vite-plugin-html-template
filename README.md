@@ -2,6 +2,8 @@
 
 > HTML template for vite app, like html-webpack-plugin for webpack.
 
+> If you are MPA, use together with [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa) is perfect.
+
 <p align="center">
   <img alt="wakatime" src="https://wakatime.com/badge/github/IndexXuan/vite-plugin-html-template.svg" />
   <a href="https://github.com/IndexXuan/vite-plugin-html-template/actions/workflows/npm-publish.yml">
