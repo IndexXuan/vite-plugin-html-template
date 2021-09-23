@@ -15,6 +15,7 @@ interface Payload {
   pageTitle: string
   isMPA: boolean
   data: UserOptions['data']
+  entry: UserOptions['entry']
   extraData: {
     base: string
     url: string
@@ -23,7 +24,17 @@ interface Payload {
 
 /** patch original content with vite entry esmodule script */
 export async function getHtmlContent(payload: Payload) {
-  const { pagesDir, templatePath, pageName, pageTitle, pageEntry, isMPA, data, extraData } = payload
+  const {
+    pagesDir,
+    templatePath,
+    pageName,
+    pageTitle,
+    pageEntry,
+    isMPA,
+    data,
+    entry,
+    extraData,
+  } = payload
   let content = ''
   const entryJsPath = (() => {
     // entry case: src/pages/index/main.ts or /src/pages/index/main.ts or ./src/pages/index/main.ts => /src/pages/index/main.ts
@@ -33,7 +44,7 @@ export async function getHtmlContent(payload: Payload) {
           ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
           : `/${pagesDir}/index/${pageEntry}`
       } else {
-        return '/src/main'
+        return entry
       }
     } else {
       if (isMPA) {
@@ -41,7 +52,7 @@ export async function getHtmlContent(payload: Payload) {
           ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
           : `/${pagesDir}/${pageName}/${pageEntry}`
       } else {
-        return '/src/main'
+        return entry
       }
     }
   })()
