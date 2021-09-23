@@ -37,24 +37,16 @@ export async function getHtmlContent(payload: Payload) {
   } = payload
   let content = ''
   const entryJsPath = (() => {
-    // entry case: src/pages/index/main.ts or /src/pages/index/main.ts or ./src/pages/index/main.ts => /src/pages/index/main.ts
-    if (['/', '/index.html'].includes(extraData.url)) {
-      if (isMPA) {
-        return pageEntry.includes('src')
-          ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
-          : `/${pagesDir}/index/${pageEntry}`
-      } else {
-        return entry
+    if (isMPA) {
+      // entry case: src/pages/index/main.ts or /src/pages/index/main.ts or ./src/pages/index/main.ts => /src/pages/index/main.ts
+      if (pageEntry.includes('src')) {
+        return `/${pageEntry.replace('/./', '/').replace('//', '/')}`
       }
-    } else {
-      if (isMPA) {
-        return pageEntry.includes('src')
-          ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
-          : `/${pagesDir}/${pageName}/${pageEntry}`
-      } else {
-        return entry
-      }
+      return ['/', '/index.html'].includes(extraData.url)
+        ? `/${pagesDir}/index/${pageEntry}`
+        : `/${pagesDir}/${pageName}/${pageEntry}`
     }
+    return entry
   })()
   try {
     content = await readHtmlTemplate(templatePath)
