@@ -56,6 +56,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
             pageTitle: page.title || 'Home Page',
             isMPA,
             data: options.data,
+            entry: options.entry || '/src/main',
             extraData: {
               base: config.base,
               url,
@@ -105,6 +106,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
             url: isMPA ? idNoPrefix : '/',
           },
           data: options.data,
+          entry: options.entry || '/src/main',
         })
       }
       return null

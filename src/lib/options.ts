@@ -38,6 +38,10 @@ export interface Options {
    * @default {}
    */
   data: Record<string, any>
+  /**
+   * @default '/src/main'
+   */
+  entry?: string
 }
 
 export type UserOptions = Partial<Options>

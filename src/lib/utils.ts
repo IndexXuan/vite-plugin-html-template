@@ -15,6 +15,7 @@ interface Payload {
   pageTitle: string
   isMPA: boolean
   data: UserOptions['data']
+  entry: UserOptions['entry']
   extraData: {
     base: string
     url: string
@@ -23,27 +24,29 @@ interface Payload {
 
 /** patch original content with vite entry esmodule script */
 export async function getHtmlContent(payload: Payload) {
-  const { pagesDir, templatePath, pageName, pageTitle, pageEntry, isMPA, data, extraData } = payload
+  const {
+    pagesDir,
+    templatePath,
+    pageName,
+    pageTitle,
+    pageEntry,
+    isMPA,
+    data,
+    entry,
+    extraData,
+  } = payload
   let content = ''
   const entryJsPath = (() => {
-    // entry case: src/pages/index/main.ts or /src/pages/index/main.ts or ./src/pages/index/main.ts => /src/pages/index/main.ts
-    if (['/', '/index.html'].includes(extraData.url)) {
-      if (isMPA) {
-        return pageEntry.includes('src')
-          ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
-          : `/${pagesDir}/index/${pageEntry}`
-      } else {
-        return '/src/main'
+    if (isMPA) {
+      // entry case: src/pages/index/main.ts or /src/pages/index/main.ts or ./src/pages/index/main.ts => /src/pages/index/main.ts
+      if (pageEntry.includes('src')) {
+        return `/${pageEntry.replace('/./', '/').replace('//', '/')}`
       }
-    } else {
-      if (isMPA) {
-        return pageEntry.includes('src')
-          ? `/${pageEntry.replace('/./', '/').replace('//', '/')}`
-          : `/${pagesDir}/${pageName}/${pageEntry}`
-      } else {
-        return '/src/main'
-      }
+      return ['/', '/index.html'].includes(extraData.url)
+        ? `/${pagesDir}/index/${pageEntry}`
+        : `/${pagesDir}/${pageName}/${pageEntry}`
     }
+    return entry
   })()
   try {
     content = await readHtmlTemplate(templatePath)
