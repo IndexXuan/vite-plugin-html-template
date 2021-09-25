@@ -2,7 +2,7 @@
 
 > HTML template for vite app, like html-webpack-plugin for webpack.
 
-> If you are MPA, use together with [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa) is perfect.
+> If you use MPA, it works perfectly together with [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa).
 
 <p align="center">
   <img alt="wakatime" src="https://wakatime.com/badge/github/IndexXuan/vite-plugin-html-template.svg" />
@@ -22,10 +22,10 @@
 
 ## Motivation
 
-- Vite need html for entry file, which means we must have
+- Vite needs an html entry file, which means we must have
   - projectRoot/index.html for SPA
   - projectRoot/src/pages/*/index.html for MPA
-- Why not we use html template for all entry html
+- Why not use html template for all entries
 - Also we should support ejs/lodash.template syntax for the html content, like setting `<title></title>`.
 
 ## Usage
@@ -51,26 +51,26 @@ export default defineConfig({
 
 - like [vue-cli#pages](https://cli.vuejs.org/config/#pages)
 ```ts
-// for SPA, you can do nothing, auto reuse public/index.html as template
+// for SPA, there is nothing to do, just use `public/index.html` as template
 
-// for MPA, you can custom template path(default is public/index.html) and page title
+// for MPA, customise the template path (default is `public/index.html`) and page title:
 {
-  // where pages ?
+  // where is the pages' root directory?
   pagesDir: 'src/pages',
-  // define pages like vue-cli
+  // define pages like it is done in vue-cli
   pages: {
     index: {
       template: './public/index.html',
-      title: 'Home Page',
+      title: 'Homepage',
     },
     subpage: {
       template: './src/pages/subpage/index.html',
-      title: 'Sub Page',
+      title: 'Subpage',
     },
   },
   // expose to template
   data: {
-    title: 'Home Page',
+    title: 'Homepage',
   },
 }
 ```
