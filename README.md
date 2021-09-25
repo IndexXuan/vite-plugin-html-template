@@ -1,8 +1,7 @@
 # vite-plugin-html-template
 
 > HTML template for vite app, like html-webpack-plugin for webpack.
-
-> If you use MPA, it works perfectly together with [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa).
+> It works perfectly together with [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa).
 
 <p align="center">
   <img alt="wakatime" src="https://wakatime.com/badge/github/IndexXuan/vite-plugin-html-template.svg" />
@@ -31,7 +30,7 @@
 ## Usage
 
 ```sh
-yarn add vite-plugin-html-template
+yarn add -D vite-plugin-html-template
 ```
 
 ```ts
