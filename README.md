@@ -1,6 +1,7 @@
 # vite-plugin-html-template
 
 > HTML template for vite app, like html-webpack-plugin for webpack.
+
 > It works perfectly together with [vite-plugin-mpa](https://github.com/IndexXuan/vite-plugin-mpa).
 
 <p align="center">
