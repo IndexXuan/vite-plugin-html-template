@@ -48,7 +48,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
             ? resolve(templateOption)
             : resolve('public/index.html')
           const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
-          const content = await getHtmlContent({
+          let content = await getHtmlContent({
             pagesDir: options.pagesDir,
             pageName,
             templatePath,
@@ -62,6 +62,10 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
               url,
             },
           })
+
+          // using vite's transform html function to add basic html support
+          content = await server.transformIndexHtml?.(url, content, req.originalUrl)
+
           res.end(content)
         })
       }
