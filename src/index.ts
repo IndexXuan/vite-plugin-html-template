@@ -47,7 +47,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           const templatePath = templateOption
             ? resolve(templateOption)
             : resolve('public/index.html')
-          const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
+          const isMPA = typeof config.build.rollupOptions.input !== 'string' && Object.keys(config.build.rollupOptions.input || {}).length > 0
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
             pageName,
@@ -76,7 +76,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
      */
     resolveId(id) {
       if (id.endsWith('.html')) {
-        const isMPA = Object.keys(config.build.rollupOptions.input || {}).length > 0
+        const isMPA = typeof config.build.rollupOptions.input !== 'string' && Object.keys(config.build.rollupOptions.input || {}).length > 0
         if (!isMPA) {
           return `${PREFIX}/${path.basename(id)}`
         } else {
@@ -97,7 +97,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         const page = options.pages[pageName] || {}
         const templateOption = page.template
         const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
-        const isMPA = Object.keys(config.build?.rollupOptions.input || {}).length > 0
+        const isMPA = typeof config.build?.rollupOptions.input !== 'string' && Object.keys(config.build?.rollupOptions.input || {}).length > 0
         return getHtmlContent({
           pagesDir: options.pagesDir,
           pageName,
@@ -117,7 +117,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     },
     /** for build */
     closeBundle() {
-      const isMPA = Object.keys(config.build?.rollupOptions.input || {}).length > 0
+      const isMPA = typeof config.build?.rollupOptions.input !== 'string' && Object.keys(config.build?.rollupOptions.input || {}).length > 0
       // MPA handled by vite-plugin-mpa
       if (!isMPA) {
         const root = config.root || process.cwd()
