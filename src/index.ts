@@ -9,6 +9,7 @@ import { name } from '../package.json'
 const resolve = (p: string) => path.resolve(process.cwd(), p)
 // must src to corresponding with vite-plugin-mpa#closeBundle hook
 const PREFIX = 'src'
+const isWin32 = require('os').platform() === 'win32'
 
 export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
   const options = {
@@ -47,7 +48,9 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           const templatePath = templateOption
             ? resolve(templateOption)
             : resolve('public/index.html')
-          const isMPA = typeof config.build.rollupOptions.input !== 'string' && Object.keys(config.build.rollupOptions.input || {}).length > 0
+          const isMPA =
+            typeof config.build.rollupOptions.input !== 'string' &&
+            Object.keys(config.build.rollupOptions.input || {}).length > 0
           let content = await getHtmlContent({
             pagesDir: options.pagesDir,
             pageName,
@@ -76,13 +79,17 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
      */
     resolveId(id) {
       if (id.endsWith('.html')) {
-        const isMPA = typeof config.build.rollupOptions.input !== 'string' && Object.keys(config.build.rollupOptions.input || {}).length > 0
+        const isMPA =
+          typeof config.build.rollupOptions.input !== 'string' &&
+          Object.keys(config.build.rollupOptions.input || {}).length > 0
         if (!isMPA) {
           return `${PREFIX}/${path.basename(id)}`
         } else {
-          const pageName = last(path.dirname(id).split('/')) || ''
+          const pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || ''
           if (pageName in (config.build.rollupOptions.input as any)) {
-            return `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`
+            return isWin32
+              ? id.replace(/\\/g, '/')
+              : `${PREFIX}/${options.pagesDir.replace('src/', '')}/${pageName}/index.html`
           }
         }
       }
@@ -90,14 +97,20 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     },
     /** for dev */
     load(id) {
-      if (id.startsWith(PREFIX)) {
+      if (
+        isWin32
+          ? id.startsWith(resolve('').replace(/\\/g, '/')) && id.endsWith('.html')
+          : id.startsWith(PREFIX)
+      ) {
         const idNoPrefix = id.slice(PREFIX.length)
-        const pageName = path.basename(id).replace('.html', '')
+        const pageName = last(path.dirname(id).split('/')) || ''
 
         const page = options.pages[pageName] || {}
         const templateOption = page.template
         const templatePath = templateOption ? resolve(templateOption) : resolve('public/index.html')
-        const isMPA = typeof config.build?.rollupOptions.input !== 'string' && Object.keys(config.build?.rollupOptions.input || {}).length > 0
+        const isMPA =
+          typeof config.build?.rollupOptions.input !== 'string' &&
+          Object.keys(config.build?.rollupOptions.input || {}).length > 0
         return getHtmlContent({
           pagesDir: options.pagesDir,
           pageName,
@@ -117,7 +130,9 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     },
     /** for build */
     closeBundle() {
-      const isMPA = typeof config.build?.rollupOptions.input !== 'string' && Object.keys(config.build?.rollupOptions.input || {}).length > 0
+      const isMPA =
+        typeof config.build?.rollupOptions.input !== 'string' &&
+        Object.keys(config.build?.rollupOptions.input || {}).length > 0
       // MPA handled by vite-plugin-mpa
       if (!isMPA) {
         const root = config.root || process.cwd()
