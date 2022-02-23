@@ -103,7 +103,8 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           : id.startsWith(PREFIX)
       ) {
         const idNoPrefix = id.slice(PREFIX.length)
-        const pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || ''
+        // resolveId checked isWin32 already
+        const pageName = last(path.dirname(id).split('/')) || ''
 
         const page = options.pages[pageName] || {}
         const templateOption = page.template
