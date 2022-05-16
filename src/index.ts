@@ -6,6 +6,19 @@ import { last } from 'lodash'
 import { getHtmlContent } from './lib/utils'
 import { name } from '../package.json'
 
+function dfs(strArr: string[], value: Record<string, any>, res: Record<string, any>) {
+  if (strArr.length) {
+    const strItem = strArr.shift()
+    if (!strArr.length) {
+      res[strItem!] = value
+    } else {
+      res[strItem!] = {}
+      dfs(strArr, value, res[strItem!])
+    }
+  }
+  return res
+}
+
 const resolve = (p: string) => path.resolve(process.cwd(), p)
 // must src to corresponding with vite-plugin-mpa#closeBundle hook
 const PREFIX = 'src'
@@ -17,6 +30,15 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     pages: {},
     data: {},
     ...userOptions,
+  }
+  if (options.data) {
+    const [[keys, value]] = Object.entries(options.data)
+    if (keys.includes('.')) {
+      const key = keys.split('.')
+      const rebuildData = {}
+      const res = dfs(key, value, rebuildData)
+      options.data = res
+    }
   }
   let config: ResolvedConfig
   return {
