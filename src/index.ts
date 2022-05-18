@@ -3,21 +3,8 @@ import type { UserOptions } from './lib/options'
 import path from 'path'
 import shell from 'shelljs'
 import { last } from 'lodash'
-import { getHtmlContent } from './lib/utils'
+import { getHtmlContent, dfs, dfs2 } from './lib/utils'
 import { name } from '../package.json'
-
-function dfs(strArr: string[], value: Record<string, any>, res: Record<string, any>) {
-  if (strArr.length) {
-    const strItem = strArr.shift()
-    if (!strArr.length) {
-      res[strItem!] = value
-    } else {
-      res[strItem!] = {}
-      dfs(strArr, value, res[strItem!])
-    }
-  }
-  return res
-}
 
 const resolve = (p: string) => path.resolve(process.cwd(), p)
 // must src to corresponding with vite-plugin-mpa#closeBundle hook
@@ -32,13 +19,18 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     ...userOptions,
   }
   if (options.data) {
-    const [[keys, value]] = Object.entries(options.data)
-    if (keys.includes('.')) {
-      const key = keys.split('.')
-      const rebuildData = {}
-      const res = dfs(key, value, rebuildData)
-      options.data = res
-    }
+    // support options.data with 'a.b.c' and 'a: {b: {c: 11}}'
+    const rebuildData = {}
+    Object.keys(options.data).forEach((key) => {
+      const value = options.data[key]
+      if (key.includes('.')) {
+        const keys = key.split('.')
+        dfs(keys, value, rebuildData)
+      } else {
+        dfs2(rebuildData, key, value)
+      }
+    })
+    options.data = rebuildData
   }
   let config: ResolvedConfig
   return {
