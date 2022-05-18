@@ -32,12 +32,15 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     ...userOptions,
   }
   if (options.data) {
-    const [[keys, value]] = Object.entries(options.data)
-    if (keys.includes('.')) {
-      const key = keys.split('.')
-      const rebuildData = {}
-      const res = dfs(key, value, rebuildData)
-      options.data = res
+    const array = Object.entries(options.data)
+    if (array.length) {
+      const [[keys, value]] = array;
+      if (keys.includes('.')) {
+        const key = keys.split('.')
+        const rebuildData = {}
+        const res = dfs(key, value, rebuildData)
+        options.data = res
+      }
     }
   }
   let config: ResolvedConfig
