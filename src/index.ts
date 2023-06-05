@@ -2,8 +2,7 @@ import type { Plugin, ViteDevServer, ResolvedConfig } from 'vite'
 import type { UserOptions } from './lib/options'
 import path from 'path'
 import shell from 'shelljs'
-import { last } from 'lodash'
-import { getHtmlContent, dfs, dfs2 } from './lib/utils'
+import { getHtmlContent, dfs, dfs2, findPageName } from './lib/utils'
 import { name } from '../package.json'
 
 const resolve = (p: string) => path.resolve(process.cwd(), p)
@@ -99,7 +98,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         if (!isMPA) {
           return `${PREFIX}/${path.basename(id)}`
         } else {
-          const pageName = last(path.dirname(id).split(isWin32 ? '\\' : '/')) || ''
+          const pageName = findPageName(id, options.pagesDir)
           if (pageName in (config.build.rollupOptions.input as any)) {
             return isWin32
               ? id.replace(/\\/g, '/')
@@ -118,7 +117,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
       ) {
         const idNoPrefix = id.slice(PREFIX.length)
         // resolveId checked isWin32 already
-        const pageName = last(path.dirname(id).split('/')) || ''
+        const pageName = findPageName(id, options.pagesDir)
 
         const page = options.pages[pageName] || {}
         const templateOption = page.template
