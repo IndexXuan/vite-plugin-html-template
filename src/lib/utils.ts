@@ -1,6 +1,9 @@
 import type { UserOptions } from './options'
 import { promises as fs } from 'fs'
-import { template } from 'lodash'
+import { template, last } from 'lodash'
+import path from 'path'
+
+const isWin32 = require('os').platform() === 'win32'
 
 /** read original template content */
 async function readHtmlTemplate(templatePath: string) {
@@ -119,4 +122,12 @@ export function dfs2(rebuildData: Record<string, any>, key: string, value: Recor
   } else {
     rebuildData[key] = value
   }
+}
+
+export function findPageName(id: string, pageDir: string) {
+  const pDir = isWin32 ? pageDir.replace('/', '\\') : pageDir
+  const pathWithoutPageDir = last(path.dirname(id).split(pDir)) || ''
+
+  // remove leading \\ or /
+  return isWin32 ? pathWithoutPageDir.replace(/^\\/, '') : pathWithoutPageDir.replace(/^\//, '')
 }
