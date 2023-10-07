@@ -125,8 +125,9 @@ export function dfs2(rebuildData: Record<string, any>, key: string, value: Recor
 }
 
 export function findPageName(id: string, pageDir: string) {
-  const pDir = isWin32 ? pageDir.replace('/', '\\') : pageDir
-  const pathWithoutPageDir = last(path.dirname(id).split(pDir)) || ''
+  const pId = isWin32 ? id.replace(/\//g, '\\') : id
+  const pDir = isWin32 ? pageDir.replace(/\//g, '\\') : pageDir
+  const pathWithoutPageDir = last(path.dirname(pId).split(pDir)) || ''
 
   // remove leading \\ or /
   return isWin32 ? pathWithoutPageDir.replace(/^\\/, '') : pathWithoutPageDir.replace(/^\//, '')
