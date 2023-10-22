@@ -32,8 +32,12 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
     options.data = rebuildData
   }
   let config: ResolvedConfig
+  let command: 'build' | 'serve' = 'build'
   return {
     name,
+    config(config, env) {
+      command = env.command
+    },
     configResolved(resolvedConfig) {
       config = resolvedConfig
     },
@@ -148,7 +152,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         typeof config.build?.rollupOptions.input !== 'string' &&
         Object.keys(config.build?.rollupOptions.input || {}).length > 0
       // MPA handled by vite-plugin-mpa
-      if (!isMPA) {
+      if (!isMPA && command === 'build') {
         const root = config.root || process.cwd()
         const dest = (config.build && config.build.outDir) || 'dist'
         const resolve = (p: string) => path.resolve(root, p)
