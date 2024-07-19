@@ -100,7 +100,7 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
           typeof config.build.rollupOptions.input !== 'string' &&
           Object.keys(config.build.rollupOptions.input || {}).length > 0
         if (!isMPA) {
-          return `${PREFIX}/${path.basename(id)}`
+          return isWin32 ? id.replace(/\\/g, '/') : `${PREFIX}/${path.basename(id)}`
         } else {
           const pageName = findPageName(id, options.pagesDir)
           if (pageName in (config.build.rollupOptions.input as any)) {
@@ -158,7 +158,9 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
         const resolve = (p: string) => path.resolve(root, p)
 
         // 1. move src/*.html to dest root
-        shell.mv(resolve(`${dest}/${PREFIX}/*.html`), resolve(dest))
+
+        if (!isWin32 || shell.test('-e', resolve(`${dest}/${PREFIX}/*.html`)))
+          shell.mv(resolve(`${dest}/${PREFIX}/*.html`), resolve(dest))
         // 2. remove empty src dir
         shell.rm('-rf', resolve(`${dest}/${PREFIX}`))
       }
