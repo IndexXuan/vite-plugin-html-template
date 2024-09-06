@@ -42,6 +42,11 @@ export interface Options {
    * @default '/src/main'
    */
   entry?: string
+  /**
+   * template path for all pages, has lower priority than `template` in `pages`
+   * @default public/index.html
+   */
+  template?: string
 }
 
 export type UserOptions = Partial<Options>

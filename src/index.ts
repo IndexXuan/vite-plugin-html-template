@@ -61,7 +61,8 @@ export default function htmlTemplate(userOptions: UserOptions = {}): Plugin {
             return url.match(new RegExp(`${options.pagesDir}/(.*)/`))?.[1] || 'index'
           })()
           const page = options.pages[pageName] || {}
-          const templateOption = page.template
+          // page template has higher priority than template in options
+          const templateOption = page.template || options.template
           const templatePath = templateOption
             ? resolve(templateOption)
             : resolve('public/index.html')
